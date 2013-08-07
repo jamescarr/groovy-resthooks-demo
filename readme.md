@@ -21,13 +21,31 @@ proxylocal 5055 &
 proxylocal 5050 &
 
 ```
-This will run proxylocal and create two addresses for you to use.
-
-Now run the service and client service:
+This will run proxylocal and create two addresses for you to use. You
+should get some output like this:
 
 ```bash
-./run_service.sh
-./run_client.sh
+
+jamescarr@James-MacBook-Air: ~
+$ proxylocal 5050 &    
+Local server on port 5050 is now publicly available via:                                                                                                  [1:23:09]
+http://pu5x.t.proxylocal.com/
+
+
+jamescarr@James-MacBook-Air: ~
+$ proxylocal 5055 &                                                                                                                                           [1:23:11]
+Local server on port 5055 is now publicly available via:
+http://hd9u.t.proxylocal.com/
+```
+
+Take note of those urls!
+
+Now run the service and client service and pass the urls for the two
+earlier proxylocal commands (yours will be different!):
+
+```bash
+./run_service.sh http://hd9u.t.proxylocal.com/
+./run_client.sh http://pu5x.t.proxylocal.com/
 
 ```
 

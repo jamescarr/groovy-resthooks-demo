@@ -29,12 +29,13 @@ ratpack {
               message: "${request.form.name} has been added!")
     
             println "Notifying all subscribers!"
-            subscriptions.notify('employee.added', employee)
+            subscriptions.notify('employee_added', employee)
         }
 
         post("api/unsubscribe") { 
             def slurper = new JsonSlurper()
             def unsubRequest = slurper.parseText(request.text)
+            unsubRequest.url = unsubRequest.subscription_url
             println "api/unsubscribe recieved ${request.text}"
             
             if (subscriptions.exists(unsubRequest)) {
@@ -46,19 +47,12 @@ ratpack {
                 response.send "application/json", "{\"message\": \"${message}\"}"
             }
         }
-        post("api/confirm") {
-            def slurper = new JsonSlurper()
-            def confirmation = slurper.parseText(request.text)
-            println "api/confirm recieved ${request.text}"
-            
-            if (subscriptions.verify(confirmation)) {
-                response.send "application.json", '{"message": "Subscription Confirmed!"}'
-            } else {
-                response.status 401
-                response.send "application.json", '{"message": "Invalid Token"}'
-            }
-          
+        
+        get("api/me") {
+            // always authenticate.
+            response.send "application/json", "{\"account_id\": 128319283}"
         }
+
         post("api/subscribe") { 
             def slurper = new JsonSlurper()
             def data = slurper.parseText(request.text)
@@ -91,17 +85,6 @@ class Subscription {
 
     private static final Random random = new Random()
 
-    def requestValidation() {
-        this.token = this.generateSha1Hash()
-        def client = new RESTClient(this.url)
-        def BASE_URL = System.env['DEMO_SERVICE_BASE_URL']
-        
-        client.post() {
-            type "application/json"
-            json confirm_url: "${BASE_URL}/api/confirm", token: this.token, type: 'confirmation_request'
-        }
-    }
-
     def notify(event, data) {
         if (this.status != 'active') return;
 
@@ -110,14 +93,6 @@ class Subscription {
             type "application/json"
             json data: data, type: event
         }
-
-        
-    }
-    private def generateSha1Hash() {
-        def messageDigest = MessageDigest.getInstance("SHA1")
-        def nextInt = this.random.nextInt(1000000)
-        messageDigest.update("${this.url}${nextInt}".bytes)
-        return new BigInteger(1, messageDigest.digest()).toString(16).padLeft( 40, '0' )
     }
 }
 
@@ -138,11 +113,10 @@ class Subscriptions {
 
     def add(data) {
         def subscription = new Subscription(
-            url:data.url,
+            url:data.subscription_url,
             event: data.event,
-            status: 'pending'
+            status: 'active'
         )
-        subscription.requestValidation()
         this.subscriptions << subscription
     }
 
@@ -153,22 +127,10 @@ class Subscriptions {
             }
         }
     }
+
     def all() {
         subscriptions
     }
-
-    def verify(confirmation) {
-        def subscription = subscriptions.findResult { 
-            confirmation.token.equals(it.token) ? it : null
-        }
-
-        if (subscription) {
-            subscription.status = 'active'
-            return true
-        }
-        return false
-    }
-
 }
 
 

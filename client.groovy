@@ -10,9 +10,11 @@ import java.util.Random
 import java.math.BigInteger
 
 
+def BASE_URL = System.env['DEMO_CLIENT_BASE_URL']
+
 ratpack {
     handlers {
-        post("recieve") { 
+        post("recieve/:hash") { 
             def slurper = new JsonSlurper()
             def data = slurper.parseText(request.text)
             println request.text
@@ -23,19 +25,12 @@ ratpack {
                 def client = new RESTClient(data.confirm_url)
                 def result = client.post() {
                     type 'application/json'
-                    json token: data.token
+                    json token: data.token, url: "${BASE_URL}${request.uri}".replace('//', '/')
                 }
-                
             }
 
         }
         
-        // list all subscriptions
-        get("subscriptions") {
-            JsonBuilder json = new JsonBuilder()
-            response.send "application/json", json.toString()
-        }
-
     }
 }
 

@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  
+    <title>Add Employee</title>
+    <script type="text/javascript" charset="utf-8" src="/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css" />
+      
+  </head>
+  <body>
+    <div class="container">
+      <h1>Employee Entry Form</h1>
+      <% if (model.message) { %>
+      <div class="alert alert-success">${model.message}</div>
+      <% } %>
+      <div class="panel">
+        <div class="panel-heading">
+          <h3 class="panel-title">Add Employee</h3>
+        </div>
+        <form action="/add" method="post" class="form-horizontal">
+           <div class="form-group">
+             <label for="inputName" class="col-lg-2 control-label">Name</label>
+             <div class="col-lg-10">
+               <input type="text" name="name" class="form-control" id="inputName" placeholder="Michael Bluth">
+             </div>
+           </div>
+
+           <div class="form-group">
+             <label for="inputEmail" class="col-lg-2 control-label">Email</label>
+             <div class="col-lg-10">
+               <input type="text" name="email" class="form-control" id="inputEmail" placeholder="mbluth@example.com">
+             </div>
+           </div>
+
+           <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

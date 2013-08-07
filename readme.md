@@ -3,12 +3,13 @@ This is a simple demo to illustrate rest hooks using ratpack as the app
 server. 
 
 ## API
+Here are the following endpoints supported by the service/ratpack.groovy service. 
 
-POST /susbcribe - creates new subscription
-POST /verify - verifies subscription
-POST /unsubscribe - removes subscription
+* POST /susbcribe - creates new subscription
+* POST /confirm - verifies subscription
+* POST /unsubscribe - removes subscription
 
-GET /subscriptions - lists subscriptions
+* GET /subscriptions - lists subscriptions
 
 ## Running It
 You should use bundler to install the bundled gems (requires ruby 1.9.3
